@@ -1,0 +1,21 @@
+package com.dj.api.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/scan")
+public class EtherscanController {
+
+
+
+
+
+
+
+
+
+
+
+
+}
