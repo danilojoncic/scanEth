@@ -25,14 +25,10 @@ public class TaskController {
             @RequestParam(required = false, defaultValue = "100") int size
     ) {
         try {
-            Long latestBlock = crawlerServiceImplemented.getLatestBlockNumber().block();
-
-            long endBlock = latestBlock;
 
             List<JsonNode> transactions = crawlerServiceImplemented
-                    .getTransactionsByAddressPaged(address, startBlock, endBlock, page, size)
+                    .getTransactionsByAddressPaged(address, startBlock, page, size)
                     .block();
-
             return ResponseEntity.ok(transactions);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to fetch transactions: " + e.getMessage());

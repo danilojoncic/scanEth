@@ -22,8 +22,7 @@ public class CrawlerServiceImplemented implements CrawlerService {
     @Value("${etherscan.api.key}")
     private String apiKey;
 
-    @Value("${etherscan.base.url}")
-    private String ETHERSCAN_BASE_URL;
+    private Long latestBlockNumber;
 
 
     @Scheduled(fixedRate = 12000)
@@ -94,7 +93,10 @@ public class CrawlerServiceImplemented implements CrawlerService {
     }
 
 
-    public Mono<List<JsonNode>> getTransactionsByAddressPaged(String address, long startBlock, long endBlock, int page, int offset) {
+    public Mono<List<JsonNode>> getTransactionsByAddressPaged(String address, long startBlock, int page, int offset) {
+        if (latestBlockNumber == null){
+            latestBlockNumber = getLatestBlockNumber().block();
+        }
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
@@ -104,7 +106,7 @@ public class CrawlerServiceImplemented implements CrawlerService {
                         .queryParam("action", "txlist")
                         .queryParam("address", address)
                         .queryParam("startblock", startBlock)
-                        .queryParam("endblock", endBlock)
+                        .queryParam("endblock", latestBlockNumber)
                         .queryParam("page", page)
                         .queryParam("offset", offset)
                         .queryParam("sort", "asc")
