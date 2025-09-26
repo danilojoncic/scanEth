@@ -1,5 +1,4 @@
 package com.dj.api.service.implementation;
-
 import com.dj.api.model.EthereumTransaction;
 import com.dj.api.repository.EthereumRepository;
 import com.dj.api.service.CrawlerService;
@@ -15,9 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
-import reactor.core.publisher.Mono;
-
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -39,7 +35,18 @@ public class CrawlerServiceImplemented implements CrawlerService {
     private Long latestBlockNumber = null;
 
 
+    /***
+     * Gets a page of transactions from an etheruem address, if the transactions are
+     * not in the database they are fetched using the Etherscan API and then delivered
+     * @param address self explanatory
+     * @param startBlock Begining of the range of blocks that we will look at
+     *                   the end is always the current pseudo-latest block
+     * @param page self explanatory
+     * @param size self explanatory
+     * @return Page of ethereum transactions
+     */
     //https://docs.etherscan.io/get-an-addresss-full-transaction-history sjajni su
+    @Override
     public Page<EthereumTransaction> getTransactionsByAddressPaged(
             String address, long startBlock, int page, int size
     ) {
@@ -69,6 +76,15 @@ public class CrawlerServiceImplemented implements CrawlerService {
 
     }
 
+    /***
+     * Private helper functuon that fetchets the transactions from the Etherscan API
+     * @param address self explanatory
+     * @param startBlock self explanatory
+     * @param endBlock self explanatory
+     * @param page self explanatory
+     * @param offset self explanatory
+     * @return A List of Ethereum Transactions
+     */
     private List<EthereumTransaction> fetchTransactionsFromEtherscan(String address, long startBlock, long endBlock,int page,int offset) {
         String response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -130,7 +146,11 @@ public class CrawlerServiceImplemented implements CrawlerService {
     }
 
 
-
+    /***
+     * Parses the functionName field and from it gets the different types used from the lookup map
+     * @param input self explanatory
+     * @return Fully parsed function name
+     */
     private String parseFunctionName(String input) {
         if (input == null || input.isEmpty() || input.equals("0x")) return null;
 
@@ -144,6 +164,17 @@ public class CrawlerServiceImplemented implements CrawlerService {
         }
     }
 
+    /***
+     * Gives us the ETH Balance of an address at a specified date in time, uses the Alchemy API for the balance
+     * and the Etherscan API for getting the block number from the date, first we convert the date to UTC
+     * from it get a  timestamp, send the timestamp into Etherscan and then use the blocknumber for getting
+     * the final balance number at that time with Alchemy
+     * @param address self explanatory
+     * @param date self explanatory
+     * @return BigInteger representing the ETH Balance, as WEI, it later on needs to be converted into
+     * a decimal value for the true ETH Balance, using Big Decimal instances
+     */
+    @Override
     public BigInteger getBalanceAtDate(String address, String date) {
         try {
             LocalDate localDate = LocalDate.parse(date);
@@ -179,6 +210,12 @@ public class CrawlerServiceImplemented implements CrawlerService {
     }
 
 
+    /***
+     * Scheduled method that is ran every 60 seconds to fetch the latest block number
+     * using the Etherscan API, 60 seconds is a nice round number, i did not want to
+     * spend all of my API limits quickly
+     * @return A long representing the pseudo-latest block number
+     */
     @Scheduled(fixedRate = 60000)
     private long getLatestBlockNumber() {
         String response = webClient.get()

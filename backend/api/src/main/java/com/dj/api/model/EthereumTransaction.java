@@ -5,6 +5,9 @@ import lombok.Data;
 import java.math.BigInteger;
 import java.time.Instant;
 
+/***
+ * POJO Class that represent the Ethereum Transaction, it is used for the Postgres database
+ */
 @Entity
 @Table(name = "ethereum_transactions")
 @Data
@@ -14,6 +17,7 @@ public class EthereumTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /// Duplicates are negated by checking via the hash, as the hash is pseudo-random
     @Column(nullable = false,unique = true)
     private String hash;
 

@@ -20,6 +20,15 @@ public class TaskController {
 
     private final CrawlerServiceImplemented crawlerServiceImplemented;
 
+    /**
+     * Endpoint that returns all transactions from an address starting from a block number, its paginated to
+     * prevent the overuse of resources
+     * @param address The address that the requested transactions have as the sender or the reciepient
+     * @param startBlock Block number from which we will start checking the transactions up until the latest block number
+     * @param page self explanatory
+     * @param size self explanatory
+     * @return A ResponseEntity which includes a list of all transactions which include the address and begin from one block
+     */
     @GetMapping("/transactions")
     public ResponseEntity<?> getTransactions(
             @RequestParam String address,
@@ -28,10 +37,12 @@ public class TaskController {
             @RequestParam(required = false, defaultValue = "50") int size
     ) {
 
+        /// Ethereum address format check
         if (address == null || !address.matches("^0x[a-fA-F0-9]{40}$")) {
             return ResponseEntity.badRequest().body("Invalid Ethereum address");
         }
 
+        /// block number check
         if (startBlock == null || startBlock < 0) {
             return ResponseEntity.badRequest().body("startBlock must be a non-negative number");
         }
@@ -52,6 +63,12 @@ public class TaskController {
     }
 
 
+    /***
+     * Endpoint that returns the balance in ETH of an address at a certain date in time
+     * @param address The address we look at
+     * @param date The date in question, it must be in the following format YYYY-MM-DD, and cannot be in the future
+     * @return A ResponseEntity that includes the balance in ETH, A Big Decimal instance
+     */
     @GetMapping("/balance")
     public ResponseEntity<?> getBalanceAtDate(
             @RequestParam String address,
@@ -62,6 +79,7 @@ public class TaskController {
             return ResponseEntity.badRequest().body("Invalid Ethereum address");
         }
 
+        /// Date format check
         LocalDate parsedDate;
         try {
             parsedDate = LocalDate.parse(date);
@@ -69,7 +87,7 @@ public class TaskController {
             return ResponseEntity.badRequest().body("Invalid date format. Use YYYY-MM-DD");
         }
 
-
+        /// Future check
         if (parsedDate.isAfter(LocalDate.now())) {
             return ResponseEntity.badRequest().body("Date cannot be in the future");
         }
