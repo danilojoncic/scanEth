@@ -45,12 +45,17 @@ public class TaskController {
         try {
             LocalDate localDate = LocalDate.parse(date);
             long timestamp = localDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
-            Long blockNumber = crawlerServiceImplemented.getBlockByTimestamp(timestamp).block();
-            String balanceResponse = crawlerServiceImplemented.getBalanceAtBlock(address, blockNumber).block();
+            String balanceResponse = crawlerServiceImplemented
+                    .getBalanceAtTime(address, timestamp)
+                    .block();
+
             return ResponseEntity.ok(balanceResponse);
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body("Failed to fetch balance: " + e.getMessage());
         }
     }
+
+
+
 }

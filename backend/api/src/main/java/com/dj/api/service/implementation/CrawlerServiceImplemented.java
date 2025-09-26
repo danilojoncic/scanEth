@@ -24,32 +24,6 @@ public class CrawlerServiceImplemented implements CrawlerService {
 
     private Long latestBlockNumber;
 
-
-    @Scheduled(fixedRate = 12000)
-    public Mono<Long> getLatestBlockNumber() {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .scheme("https")
-                        .host("api.etherscan.io")
-                        .path("/api")
-                        .queryParam("module", "proxy")
-                        .queryParam("action", "eth_blockNumber")
-                        .queryParam("apikey", apiKey)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(response -> {
-                    try {
-                        com.fasterxml.jackson.databind.JsonNode root =
-                                new com.fasterxml.jackson.databind.ObjectMapper().readTree(response);
-                        String hexBlock = root.path("result").asText();
-                        return Long.parseLong(hexBlock.substring(2), 16); // convert hex to decimal
-                    } catch (Exception e) {
-                        throw new RuntimeException("Failed to parse latest block number", e);
-                    }
-                });
-    }
-
     public Mono<Long> getBlockByTimestamp(long timestamp) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -76,6 +50,7 @@ public class CrawlerServiceImplemented implements CrawlerService {
                 });
     }
 
+    //https://docs.etherscan.io/api-endpoints/accounts
     public Mono<String> getBalanceAtBlock(String address, long blockNumber) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -93,6 +68,7 @@ public class CrawlerServiceImplemented implements CrawlerService {
     }
 
 
+    //https://docs.etherscan.io/get-an-addresss-full-transaction-history sjajni su
     public Mono<List<JsonNode>> getTransactionsByAddressPaged(String address, long startBlock, int page, int offset) {
         if (latestBlockNumber == null){
             latestBlockNumber = getLatestBlockNumber().block();
@@ -130,5 +106,37 @@ public class CrawlerServiceImplemented implements CrawlerService {
     }
 
 
+    public Mono<String> getBalanceAtTime(String address, long timestamp) {
+        return getBlockByTimestamp(timestamp)
+                .flatMap(blockNumber -> getBalanceAtBlock(address, blockNumber));
+    }
+
+
+
+
+    @Scheduled(fixedRate = 12000)
+    public Mono<Long> getLatestBlockNumber() {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("https")
+                        .host("api.etherscan.io")
+                        .path("/api")
+                        .queryParam("module", "proxy")
+                        .queryParam("action", "eth_blockNumber")
+                        .queryParam("apikey", apiKey)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(response -> {
+                    try {
+                        com.fasterxml.jackson.databind.JsonNode root =
+                                new com.fasterxml.jackson.databind.ObjectMapper().readTree(response);
+                        String hexBlock = root.path("result").asText();
+                        return Long.parseLong(hexBlock.substring(2), 16); // convert hex to decimal
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to parse latest block number", e);
+                    }
+                });
+    }
 
 }
