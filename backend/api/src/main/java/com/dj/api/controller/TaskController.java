@@ -1,14 +1,11 @@
 package com.dj.api.controller;
 
+import com.dj.api.model.EthereumTransaction;
 import com.dj.api.service.implementation.CrawlerServiceImplemented;
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/scan")
@@ -21,17 +18,16 @@ public class TaskController {
     public ResponseEntity<?> getTransactions(
             @RequestParam String address,
             @RequestParam Long startBlock,
-            @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "100") int size
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "50") int size
     ) {
         try {
-
-            List<JsonNode> transactions = crawlerServiceImplemented
-                    .getTransactionsByAddressPaged(address, startBlock, page, size)
-                    .block();
-            return ResponseEntity.ok(transactions);
+            Page<EthereumTransaction> transactions = crawlerServiceImplemented
+                    .getTransactionsByAddressPaged(address, startBlock, page, size);
+            return ResponseEntity.ok(transactions.getContent());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to fetch transactions: " + e.getMessage());
         }
     }
+
 }

@@ -1,17 +1,20 @@
 package com.dj.api.model;
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.math.BigInteger;
 import java.time.Instant;
 
 @Entity
 @Table(name = "ethereum_transactions")
+@Data
 public class EthereumTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String hash;
 
     @Column(nullable = false)
