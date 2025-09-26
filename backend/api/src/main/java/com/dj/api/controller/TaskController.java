@@ -69,6 +69,13 @@ public class TaskController {
             return ResponseEntity.badRequest().body("Invalid date format. Use YYYY-MM-DD");
         }
 
+
+        if (parsedDate.isAfter(LocalDate.now())) {
+            return ResponseEntity.badRequest().body("Date cannot be in the future");
+        }
+
+
+
         try {
             BigInteger balanceWei = crawlerServiceImplemented.getBalanceAtDate(address, date);
             BigDecimal balanceEth = new BigDecimal(balanceWei)
