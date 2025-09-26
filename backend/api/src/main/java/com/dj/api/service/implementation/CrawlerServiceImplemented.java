@@ -13,10 +13,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +31,7 @@ public class CrawlerServiceImplemented implements CrawlerService {
 
     private final WebClient webClient;
     private final EthereumRepository ethereumRepository;
+    private final Web3j web3j;
 
     @Value("${etherscan.api.key}")
     private String apiKey;
@@ -137,6 +143,41 @@ public class CrawlerServiceImplemented implements CrawlerService {
             default: return methodId; // fallback: just store the method ID
         }
     }
+
+    public BigInteger getBalanceAtDate(String address, String date) {
+        try {
+            LocalDate localDate = LocalDate.parse(date);
+            Instant targetInstant = localDate.atStartOfDay(ZoneOffset.UTC).toInstant();
+            long timestamp = targetInstant.getEpochSecond();
+
+            String blockResponse = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("https")
+                            .host("api.etherscan.io")
+                            .path("/api")
+                            .queryParam("module", "block")
+                            .queryParam("action", "getblocknobytime")
+                            .queryParam("timestamp", timestamp)
+                            .queryParam("closest", "before")
+                            .queryParam("apikey", apiKey)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode blockRoot = mapper.readTree(blockResponse);
+            long blockNumber = blockRoot.path("result").asLong();
+
+            return web3j.ethGetBalance(address, new DefaultBlockParameterNumber(blockNumber))
+                    .send()
+                    .getBalance();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch balance at date " + date, e);
+        }
+    }
+
 
     @Scheduled(fixedRate = 60000)
     private long getLatestBlockNumber() {
