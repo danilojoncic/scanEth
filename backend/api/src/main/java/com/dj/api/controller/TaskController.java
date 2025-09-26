@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 @RestController
 @RequestMapping("/api/scan")
@@ -25,6 +27,21 @@ public class TaskController {
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "50") int size
     ) {
+
+        if (address == null || !address.matches("^0x[a-fA-F0-9]{40}$")) {
+            return ResponseEntity.badRequest().body("Invalid Ethereum address");
+        }
+
+        if (startBlock == null || startBlock < 0) {
+            return ResponseEntity.badRequest().body("startBlock must be a non-negative number");
+        }
+
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().body("page must be >= 0 and size must be > 0");
+        }
+
+
+
         try {
             Page<EthereumTransaction> transactions = crawlerServiceImplemented
                     .getTransactionsByAddressPaged(address, startBlock, page, size);
@@ -40,6 +57,18 @@ public class TaskController {
             @RequestParam String address,
             @RequestParam String date // YYYY-MM-DD
     ) {
+
+        if (address == null || !address.matches("^0x[a-fA-F0-9]{40}$")) {
+            return ResponseEntity.badRequest().body("Invalid Ethereum address");
+        }
+
+        LocalDate parsedDate;
+        try {
+            parsedDate = LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().body("Invalid date format. Use YYYY-MM-DD");
+        }
+
         try {
             BigInteger balanceWei = crawlerServiceImplemented.getBalanceAtDate(address, date);
             BigDecimal balanceEth = new BigDecimal(balanceWei)

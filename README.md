@@ -22,9 +22,13 @@ See https://etherscan.io/ for an example of how data can be visualized.
 Please, put your resolution to the private github repository and share it with marijakrivosic.
 
 ## How to run
-- clone this repository
+- `git clone` this repository
 - navigate to /backend/api/src/resources
 - create .env file 
-- write your Etherscan API or use the one sent in the email
+- write your Etherscan API key or use the one sent in the email
+- write your Alchemy API key or use the one sent in the email
+- use the following format:
+  `ETHERSCAN_API_KEY=LIJEP_I_SUNCAN_DAN                              
+    ALCHEMY_API_KEY=VJETROVIT_DAN_JE_ISTO_LIJEP`
 - then navigate back to the root of the project
-- docker-compose up --build
+- `docker-compose up --build`
