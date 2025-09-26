@@ -34,28 +34,4 @@ public class TaskController {
             return ResponseEntity.status(500).body("Failed to fetch transactions: " + e.getMessage());
         }
     }
-
-
-
-    @GetMapping("/balance")
-    public ResponseEntity<?> getBalanceFromAddressAtTime(
-            @RequestParam String address,
-            @RequestParam String date
-    ) {
-        try {
-            LocalDate localDate = LocalDate.parse(date);
-            long timestamp = localDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
-            String balanceResponse = crawlerServiceImplemented
-                    .getBalanceAtTime(address, timestamp)
-                    .block();
-
-            return ResponseEntity.ok(balanceResponse);
-        } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body("Failed to fetch balance: " + e.getMessage());
-        }
-    }
-
-
-
 }

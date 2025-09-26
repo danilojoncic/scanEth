@@ -52,6 +52,7 @@ public class CrawlerServiceImplemented implements CrawlerService {
 
     //https://docs.etherscan.io/api-endpoints/accounts
     public Mono<String> getBalanceAtBlock(String address, long blockNumber) {
+        String hexBlock = "0x" + Long.toHexString(blockNumber);
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
@@ -60,7 +61,7 @@ public class CrawlerServiceImplemented implements CrawlerService {
                         .queryParam("module", "account")
                         .queryParam("action", "balance")
                         .queryParam("address", address)
-                        .queryParam("tag", blockNumber)
+                        .queryParam("tag", hexBlock)
                         .queryParam("apikey", apiKey)
                         .build())
                 .retrieve()
@@ -132,7 +133,7 @@ public class CrawlerServiceImplemented implements CrawlerService {
                         com.fasterxml.jackson.databind.JsonNode root =
                                 new com.fasterxml.jackson.databind.ObjectMapper().readTree(response);
                         String hexBlock = root.path("result").asText();
-                        return Long.parseLong(hexBlock.substring(2), 16); // convert hex to decimal
+                        return Long.parseLong(hexBlock.substring(2), 16);
                     } catch (Exception e) {
                         throw new RuntimeException("Failed to parse latest block number", e);
                     }
