@@ -31,14 +31,15 @@ Please, put your resolution to the private github repository and share it with m
 - Scheduled calling of Etherscan API to get pseudo-latest block number
 - Node (Express)
 - Docker and docker-compose
+- Two stage creation, usinga builder (JDK image) and runner (JRE image)
 - API result caching
 - Backend Logging
 
 
 ## How to run
 - `git clone` this repository
-- navigate to /backend/api/src/resources
-- create .env file 
+- navigate to `/backend/api/src/resources`
+- create `.env` file 
 - write your Etherscan API key or use the one sent in the email
 - write your Alchemy API key or use the one sent in the email
 - use the following format:
