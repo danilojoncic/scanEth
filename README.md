@@ -21,6 +21,11 @@ See https://etherscan.io/ for an example of how data can be visualized.
 
 Please, put your resolution to the private github repository and share it with marijakrivosic.
 
+## Images
+<img width="1308" height="233" alt="Screenshot 2025-09-27 at 04 13 52" src="https://github.com/user-attachments/assets/5d4065ec-0736-41fa-bbbe-5531eb33baea" />
+<img width="1468" height="838" alt="Screenshot 2025-09-27 at 04 14 12" src="https://github.com/user-attachments/assets/8ee5dda6-819c-4778-9433-44c789cfc39d" />
+<img width="1469" height="839" alt="Screenshot 2025-09-27 at 04 17 10" src="https://github.com/user-attachments/assets/e0d02994-e6ad-43be-9eda-5d0198dc475d" />
+<img width="1463" height="405" alt="Screenshot 2025-09-27 at 04 18 12" src="https://github.com/user-attachments/assets/bfc360a5-56dd-4fb6-a184-443729462248" />
 
 ## Uses
 - Java 21
