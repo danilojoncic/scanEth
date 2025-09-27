@@ -21,6 +21,20 @@ See https://etherscan.io/ for an example of how data can be visualized.
 
 Please, put your resolution to the private github repository and share it with marijakrivosic.
 
+
+## Uses
+- Java 21
+- Gradle
+- Spring Boot 
+- Postgres
+- Etherscan and Alchemy API use
+- Scheduled calling of Etherscan API to get pseudo-latest block number
+- Node (Express)
+- Docker and docker-compose
+- API result caching
+- Backend Logging
+
+
 ## How to run
 - `git clone` this repository
 - navigate to /backend/api/src/resources
