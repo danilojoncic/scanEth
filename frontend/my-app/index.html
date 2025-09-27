@@ -12,7 +12,6 @@
             margin: 0;
             padding: 0;
         }
-
         header {
             background-color: #4b6cb7;
             background-image: linear-gradient(315deg, #4b6cb7 0%, #182848 74%);
@@ -20,153 +19,90 @@
             padding: 1rem 2rem;
             text-align: center;
         }
-
-        h1 {
-            margin: 0;
-            font-size: 2rem;
-        }
-
-        main {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: auto;
-        }
-
+        h1 { margin:0; font-size:2rem; }
+        main { padding:2rem; max-width: 95%; margin:auto; }
         form {
-            display: grid;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            display: grid; gap: 1rem; margin-bottom: 2rem;
+            background-color: #fff; padding: 1.5rem; border-radius:10px;
+            box-shadow:0px 4px 10px rgba(0,0,0,0.1);
         }
-
         input, button {
-            padding: 0.75rem;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
+            padding:0.75rem; border-radius:5px; border:1px solid #ccc;
+            font-size:1rem;
         }
-
         button {
-            background-color: #4b6cb7;
-            color: white;
-            border: none;
-            cursor: pointer;
+            background-color:#4b6cb7; color:white; border:none; cursor:pointer;
             transition: background-color 0.3s;
         }
-
-        button:hover {
-            background-color: #3a539b;
+        button:hover { background-color:#3a539b; }
+        .table-wrapper {
+            overflow-x:auto;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
-
-        th, td {
-            padding: 0.5rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #4b6cb7;
-            color: white;
-            font-size: 0.95rem;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .error {
-            color: red;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-
-        .balance {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-
-        h2 {
-            margin-top: 2rem;
-        }
+        table { width:100%; border-collapse:collapse; margin-top:1rem; font-size:0.85rem; }
+        th, td { padding:0.5rem; text-align:left; border-bottom:1px solid #ddd; white-space:nowrap; }
+        th { background-color:#4b6cb7; color:white; font-size:0.9rem; }
+        tr:hover { background-color:#f1f1f1; }
+        .error { color:red; font-weight:bold; margin-top:1rem; }
+        .balance { font-size:1.2rem; font-weight:bold; margin-top:1rem; }
+        .pagination { margin-top: 1rem; display:flex; gap:1rem; align-items:center; }
+        .pagination button { padding:0.5rem 1rem; }
     </style>
 </head>
 <body>
 <header>
     <h1>Ethereum Transactions Viewer</h1>
 </header>
-
 <main>
-    <!-- Transaction Form -->
     <form id="transactionForm">
         <h2>Fetch Transactions</h2>
-        <label>
-            Ethereum Address:
-            <input type="text" id="address" placeholder="0x..." required>
-        </label>
-        <label>
-            Start Block:
-            <input type="number" id="startBlock" value="0" required>
-        </label>
-        <label>
-            Page Size:
-            <input type="number" id="size" value="50">
-        </label>
+        <label>Ethereum Address:<input type="text" id="address" placeholder="0x..." required></label>
+        <label>Start Block:<input type="number" id="startBlock" value="0" required></label>
+        <label>Page Size:<input type="number" id="size" value="50"></label>
         <button type="submit">Fetch Transactions</button>
     </form>
 
-    <table id="transactionsTable" style="display:none;">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Hash</th>
-            <th>Block Hash</th>
-            <th>Block Number</th>
-            <th>Tx Index</th>
-            <th>Timestamp</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Value (ETH)</th>
-            <th>Gas</th>
-            <th>Gas Price</th>
-            <th>Gas Used</th>
-            <th>Cumulative Gas Used</th>
-            <th>Error</th>
-            <th>Status</th>
-            <th>Contract Address</th>
-            <th>Method ID</th>
-            <th>Function Name</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div class="table-wrapper">
+        <table id="transactionsTable" style="display:none;">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Hash</th>
+                <th>Block Hash</th>
+                <th>Block Number</th>
+                <th>Tx Index</th>
+                <th>Timestamp</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Value (ETH)</th>
+                <th>Gas</th>
+                <th>Gas Price</th>
+                <th>Gas Used</th>
+                <th>Cumulative Gas Used</th>
+                <th>Error</th>
+                <th>Status</th>
+                <th>Contract Address</th>
+                <th>Method ID</th>
+                <th>Function Name</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="pagination" id="pagination" style="display:none;">
+        <button id="prevPage">Previous</button>
+        <span>Page: <span id="currentPage">1</span></span>
+        <button id="nextPage">Next</button>
+    </div>
 
     <div class="error" id="txError"></div>
 
-    <!-- Balance Form -->
     <form id="balanceForm">
         <h2>Check Balance at Date</h2>
-        <label>
-            Ethereum Address:
-            <input type="text" id="balanceAddress" placeholder="0x..." required>
-        </label>
-        <label>
-            Date (YYYY-MM-DD):
-            <input type="date" id="balanceDate" required>
-        </label>
+        <label>Ethereum Address:<input type="text" id="balanceAddress" placeholder="0x..." required></label>
+        <label>Date (YYYY-MM-DD):<input type="date" id="balanceDate" required></label>
         <button type="submit">Check Balance</button>
     </form>
-
     <div class="balance" id="balanceResult"></div>
     <div class="error" id="balanceError"></div>
 </main>
@@ -176,72 +112,86 @@
     const txTable = document.getElementById('transactionsTable');
     const txTbody = txTable.querySelector('tbody');
     const txError = document.getElementById('txError');
+    const pagination = document.getElementById('pagination');
+    const prevPageBtn = document.getElementById('prevPage');
+    const nextPageBtn = document.getElementById('nextPage');
+    const currentPageSpan = document.getElementById('currentPage');
 
-    txForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        txTbody.innerHTML = '';
-        txError.textContent = '';
-        txTable.style.display = 'none';
+    let currentPage = 0;
+    let pageSize = 50;
+    let currentAddress = '';
+    let currentStartBlock = 0;
 
-        const address = document.getElementById('address').value.trim();
-        const startBlock = document.getElementById('startBlock').value;
-        const size = parseInt(document.getElementById('size').value) || 50;
-
+    async function fetchTransactions(page) {
         try {
-            let page = 0;
-            let allTransactions = [];
-            let hasMore = true;
+            txTbody.innerHTML = '';
+            txError.textContent = '';
+            const res = await fetch(`http://localhost:8080/api/scan/transactions?address=${currentAddress}&startBlock=${currentStartBlock}&page=${page}&size=${pageSize}`);
+            if (!res.ok) throw new Error(await res.text());
+            const transactions = await res.json();
 
-            while (hasMore) {
-                const res = await fetch(`http://backend:8080/api/scan/transactions?address=${address}&startBlock=${startBlock}&page=${page}&size=${size}`);
-                if (!res.ok) throw new Error(await res.text());
-                const transactions = await res.json();
-
-                if (transactions.length === 0) {
-                    hasMore = false;
-                } else {
-                    allTransactions = allTransactions.concat(transactions);
-                    page++;
-                }
-            }
-
-            if (allTransactions.length === 0) {
+            if (transactions.length === 0 && page === 0) {
                 txError.textContent = 'No transactions found.';
+                txTable.style.display = 'none';
+                pagination.style.display = 'none';
                 return;
             }
 
-            allTransactions.forEach(tx => {
+            transactions.forEach(tx => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${tx.id}</td>
-                    <td><a href="https://etherscan.io/tx/${tx.hash}" target="_blank">${tx.hash}</a></td>
-                    <td>${tx.blockHash}</td>
-                    <td>${tx.blockNumber}</td>
-                    <td>${tx.transactionIndex}</td>
-                    <td>${new Date(tx.timeStamp).toLocaleString()}</td>
-                    <td>${tx.fromAddress}</td>
-                    <td>${tx.toAddress}</td>
-                    <td>${(BigInt(tx.value) / 1000000000000000000n)}</td>
-                    <td>${tx.gas}</td>
-                    <td>${tx.gasPrice}</td>
-                    <td>${tx.gasUsed}</td>
-                    <td>${tx.cumulativeGasUsed}</td>
-                    <td>${tx.isError ? 'Yes' : 'No'}</td>
-                    <td>${tx.txReceiptStatus ? 'Success' : 'Failed'}</td>
-                    <td>${tx.contractAddress || '-'}</td>
-                    <td>${tx.methodId || '-'}</td>
-                    <td>${tx.functionName || '-'}</td>
-                `;
+                <td>${tx.id}</td>
+                <td><a href="https://etherscan.io/tx/${tx.hash}" target="_blank">${tx.hash}</a></td>
+                <td>${tx.blockHash}</td>
+                <td>${tx.blockNumber}</td>
+                <td>${tx.transactionIndex}</td>
+                <td>${new Date(tx.timeStamp).toLocaleString()}</td>
+                <td>${tx.fromAddress}</td>
+                <td>${tx.toAddress}</td>
+                <td>${tx.value}</td>
+                <td>${tx.gas}</td>
+                <td>${tx.gasPrice}</td>
+                <td>${tx.gasUsed}</td>
+                <td>${tx.cumulativeGasUsed}</td>
+                <td>${tx.isError?'Yes':'No'}</td>
+                <td>${tx.txReceiptStatus?'Success':'Failed'}</td>
+                <td>${tx.contractAddress || '-'}</td>
+                <td>${tx.methodId || '-'}</td>
+                <td>${tx.functionName || '-'}</td>
+            `;
                 txTbody.appendChild(row);
             });
 
             txTable.style.display = 'table';
-        } catch (err) {
+            pagination.style.display = 'flex';
+            currentPageSpan.textContent = currentPage + 1;
+
+            prevPageBtn.disabled = currentPage === 0;
+            nextPageBtn.disabled = transactions.length < pageSize;
+        } catch(err) {
             console.error(err);
             txError.textContent = `Error: ${err.message}`;
         }
+    }
+
+    txForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        currentAddress = document.getElementById('address').value.trim();
+        currentStartBlock = parseInt(document.getElementById('startBlock').value);
+        pageSize = parseInt(document.getElementById('size').value) || 50;
+        currentPage = 0;
+        fetchTransactions(currentPage);
     });
 
+    prevPageBtn.addEventListener('click', () => {
+        if(currentPage>0) { currentPage--; fetchTransactions(currentPage); }
+    });
+
+    nextPageBtn.addEventListener('click', () => {
+        currentPage++; fetchTransactions(currentPage);
+    });
+
+    // Balance form unchanged
     const balanceForm = document.getElementById('balanceForm');
     const balanceResult = document.getElementById('balanceResult');
     const balanceError = document.getElementById('balanceError');
@@ -255,7 +205,7 @@
         const date = document.getElementById('balanceDate').value;
 
         try {
-            const res = await fetch(`http://backend:8080/api/scan/balance?address=${address}&date=${date}`);
+            const res = await fetch(`http://localhost:8080/api/scan/balance?address=${address}&date=${date}`);
             if (!res.ok) throw new Error(await res.text());
             const balance = await res.text();
             balanceResult.textContent = `Balance at ${date}: ${balance}`;
