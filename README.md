@@ -25,13 +25,13 @@ Please, put your resolution to the private github repository and share it with m
 ## Uses
 - Java 21
 - Gradle
-- Spring Boot 
+- Spring Boot for Backend
 - Postgres
 - Etherscan and Alchemy API use
 - Scheduled calling of Etherscan API to get pseudo-latest block number
-- Node (Express)
+- Node (Express) and pure JS for Frontend
 - Docker and docker-compose
-- Two stage creation, usinga builder (JDK image) and runner (JRE image)
+- Two stage creation, using a builder (JDK image) and runner (JRE image)
 - API result caching
 - Backend Logging
 
@@ -40,10 +40,11 @@ Please, put your resolution to the private github repository and share it with m
 - `git clone` this repository
 - navigate to `/backend/api/src/resources`
 - create `.env` file 
-- write your Etherscan API key or use the one sent in the email
-- write your Alchemy API key or use the one sent in the email
+- write your Etherscan API key or use the one sent in the email inside the `.env` file 
+- write your Alchemy API key or use the one sent in the email inside the `.env` file 
 - use the following format:
   `ETHERSCAN_API_KEY=LIJEP_I_SUNCAN_DAN                              
     ALCHEMY_API_KEY=VJETROVIT_DAN_JE_ISTO_LIJEP`
 - then navigate back to the root of the project
 - `docker-compose up --build`
+- navigate to `localhost:3000` in your browser to access the frontend
